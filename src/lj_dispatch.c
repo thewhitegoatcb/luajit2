@@ -33,7 +33,7 @@
 #include "lj_vm.h"
 #include "luajit.h"
 
-#include "luai_devent.h"
+#include "lj_udata.h"
 
 /* Bump GG_NUM_ASMFF in lj_dispatch.h as needed. Ugly. */
 LJ_STATIC_ASSERT(GG_NUM_ASMFF == FF_NUM_ASMFUNC);
@@ -459,7 +459,15 @@ void LJ_FASTCALL lj_dispatch_ins(lua_State *L, const BCIns *pc)
 void LJ_FASTCALL lj_thread_call(lua_State *L,lua_State *from,int type)
 {
   ERRNO_SAVE
-  luai_threadevent(L,from,type);
+    if (L && (G(L)->hookmask2 & LUA_MASKTHREAD)) {
+#if LJ_64
+        from = lj_lightud_intern(L, from);
+#endif
+        setrawlightudV(L->top, from);
+        incr_top(L);
+        callhook(L, LUA_HOOKTHREAD, type);
+        L->top--;
+    }
   ERRNO_RESTORE
 }
 
