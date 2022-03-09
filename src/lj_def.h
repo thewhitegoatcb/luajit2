@@ -373,12 +373,16 @@ static LJ_AINLINE uint32_t lj_getu32(const void *v)
 /* Static assertions. */
 #define LJ_ASSERT_NAME2(name, line)	name ## line
 #define LJ_ASSERT_NAME(line)		LJ_ASSERT_NAME2(lj_assert_, line)
-#ifdef __COUNTER__
-#define LJ_STATIC_ASSERT(cond) \
-  extern void LJ_ASSERT_NAME(__COUNTER__)(int STATIC_ASSERTION_FAILED[(cond)?1:-1])
+#ifdef _MSC_VER
+    #define LJ_STATIC_ASSERT(cond) static_assert(cond,"")
 #else
-#define LJ_STATIC_ASSERT(cond) \
-  extern void LJ_ASSERT_NAME(__LINE__)(int STATIC_ASSERTION_FAILED[(cond)?1:-1])
+    #ifdef __COUNTER__
+    #define LJ_STATIC_ASSERT(cond) \
+      extern void LJ_ASSERT_NAME(__COUNTER__)(int STATIC_ASSERTION_FAILED[(cond)?1:-1])
+    #else
+    #define LJ_STATIC_ASSERT(cond) \
+      extern void LJ_ASSERT_NAME(__LINE__)(int STATIC_ASSERTION_FAILED[(cond)?1:-1])
+    #endif
 #endif
 
 /* PRNG state. Need this here, details in lj_prng.h. */
