@@ -26,6 +26,8 @@
 #include "lj_strscan.h"
 #include "lj_strfmt.h"
 
+#include "luai_devent.h"
+
 /* -- Common helper functions --------------------------------------------- */
 
 #define lj_checkapi_slot(idx) \

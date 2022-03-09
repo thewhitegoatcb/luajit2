@@ -18,6 +18,7 @@
 #include "lj_vm.h"
 #include "lj_strfmt.h"
 
+#include "luai_devent.h"
 /*
 ** LuaJIT can either use internal or external frame unwinding:
 **
@@ -738,6 +739,9 @@ static void err_raise_ext(global_State *g, int errcode)
 /* Throw error. Find catch frame, unwind stack and continue. */
 LJ_NOINLINE void LJ_FASTCALL lj_err_throw(lua_State *L, int errcode)
 {
+  if (errcode != LUA_ERRRUN) {
+    luai_errevent(L, errcode);
+  }
   global_State *g = G(L);
   lj_trace_abort(g);
   L->status = LUA_OK;
@@ -838,6 +842,7 @@ static ptrdiff_t finderrfunc(lua_State *L)
 /* Runtime error. */
 LJ_NOINLINE void LJ_FASTCALL lj_err_run(lua_State *L)
 {
+  luai_errevent(L, LUA_ERRRUN);
   ptrdiff_t ef = (LJ_HASJIT && tvref(G(L)->jit_base)) ? 0 : finderrfunc(L);
   if (ef) {
     TValue *errfunc = restorestack(L, ef);

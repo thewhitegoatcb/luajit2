@@ -658,6 +658,7 @@ typedef struct global_State {
   PRNGState prng;	/* Global PRNG state. */
   GCRef gcroot[GCROOT_MAX];  /* GC roots. */
   MRef saved_jit_base;  /* saved jit_base for lj_err_throw */
+  uint8_t hookmask2; /* save thread and exception mask*/
 } global_State;
 
 #define mainthread(g)	(&gcref(g->mainthref)->th)

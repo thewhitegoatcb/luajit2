@@ -33,6 +33,8 @@
 #include "lj_vm.h"
 #include "luajit.h"
 
+#include "luai_devent.h"
+
 /* Bump GG_NUM_ASMFF in lj_dispatch.h as needed. Ugly. */
 LJ_STATIC_ASSERT(GG_NUM_ASMFF == FF_NUM_ASMFUNC);
 
@@ -329,11 +331,19 @@ LUA_API void LUAJIT_VERSION_SYM(void)
 LUA_API int lua_sethook(lua_State *L, lua_Hook func, int mask, int count)
 {
   global_State *g = G(L);
+  int8_t mask2 = mask & 0xf0;
   mask &= HOOK_EVENTMASK;
-  if (func == NULL || mask == 0) { mask = 0; func = NULL; }  /* Consistency. */
+  if(func == NULL){
+    mask2 = 0;
+    mask = 0;
+  }
+  if(mask == 0 && mask2 == 0){
+    func = NULL;
+  }
   g->hookf = func;
   g->hookcount = g->hookcstart = (int32_t)count;
   g->hookmask = (uint8_t)((g->hookmask & ~HOOK_EVENTMASK) | mask);
+  g->hookmask2 = mask2;
   lj_trace_abort(g);  /* Abort recording on any hook change. */
   lj_dispatch_update(g);
   return 1;
@@ -355,7 +365,7 @@ LUA_API int lua_gethookcount(lua_State *L)
 }
 
 /* Call a hook. */
-static void callhook(lua_State *L, int event, BCLine line)
+void callhook(lua_State *L, int event, BCLine line)
 {
   global_State *g = G(L);
   lua_Hook hookf = g->hookf;
@@ -442,6 +452,14 @@ void LJ_FASTCALL lj_dispatch_ins(lua_State *L, const BCIns *pc)
   }
   if ((g->hookmask & LUA_MASKRET) && bc_isret(bc_op(pc[-1])))
     callhook(L, LUA_HOOKRET, -1);
+  ERRNO_RESTORE
+}
+
+/* call hookfunc by thread event. */
+void LJ_FASTCALL lj_thread_call(lua_State *L,lua_State *from,int type)
+{
+  ERRNO_SAVE
+  luai_threadevent(L,from,type);
   ERRNO_RESTORE
 }
 
