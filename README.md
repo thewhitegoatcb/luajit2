@@ -1,3 +1,32 @@
+
+# What different?
+
+Patch luajit for [lua-debug](https://github.com/actboy168/lua-debug)
+
+* changed marco LJ_STATIC_ASSERT to static_assert on msvc
+* add lua hook event:
+  * [LUA_HOOKTHREAD](#LUA_HOOKTHREAD)
+  * [LUA_HOOKEXCEPTION](#LUA_HOOKEXCEPTION)
+* global_state add field [hookmask2](#hookmask2)
+
+# Note
+
+ only test on arm64,x86,x64
+
+## Changed point
+
+### LUA_HOOKTHREAD
+
+Add entry at vm_arm64.dasc,vm_x86.dasc,vm_x64.dasc
+
+### LUA_HOOKEXCEPTION
+
+Add entry at `lj_err_throw()` and `lj_err_run()` in `lj_err.c` file
+
+### hookmask2
+
+Add field `hookmask2` in struct `global_state`
+
 # Name
 
 openresty/luajit2 - OpenResty's maintained branch of LuaJIT.
