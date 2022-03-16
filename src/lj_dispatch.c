@@ -456,13 +456,10 @@ void LJ_FASTCALL lj_dispatch_ins(lua_State *L, const BCIns *pc)
 }
 
 /* call hookfunc by thread event. */
-void LJ_FASTCALL lj_thread_call(lua_State *L,lua_State *from,int type)
+void LJ_FASTCALL lj_thread_event(lua_State *L, lua_State *from, int type)
 {
   ERRNO_SAVE
     if (L && (G(L)->hookmask2 & LUA_MASKTHREAD)) {
-#if LJ_64
-        from = lj_lightud_intern(L, from);
-#endif
         setrawlightudV(L->top, from);
         incr_top(L);
         callhook(L, LUA_HOOKTHREAD, type);

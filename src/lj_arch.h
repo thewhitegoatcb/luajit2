@@ -729,4 +729,7 @@ extern void *LJ_WIN_LOADLIBA(const char *path);
 #define LJ_SECURITY_MODESTRING \
   "\004prng\007strhash\005strid\005mcode"
 
+#ifndef LUAJIT_NO_HOOK_THREAD
+#define LJ_HOOK_THREAD 1
+#endif
 #endif

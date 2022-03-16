@@ -1201,6 +1201,30 @@ static void build_subroutines(BuildCtx *ctx)
   |
   |//-- Coroutine library --------------------------------------------------
   |
+  |.macro save_all_caller_reg
+  |  sub sp, sp, #0x90
+  |  stp x0,x1,[sp,#0x10]
+  |  stp x2,x3 ,[sp,#0x20]
+  |  stp x4,x5 ,[sp,#0x30]
+  |  stp x6,x7 ,[sp,#0x40]
+  |  stp x8,x9 ,[sp,#0x50]
+  |  stp x10,x11, [sp,#0x60]
+  |  stp x12,x13, [sp,#0x70]
+  |  stp x14,x15, [sp,#0x80]
+  |  stp x16,x17, [sp,#0x90]
+  |.endmacro
+  |.macro ret_all_caller_reg
+  |  ldp x16,x17 ,[sp,#0x90]
+  |  ldp x14,x15 ,[sp,#0x80]
+  |  ldp x12,x13 ,[sp,#0x70]
+  |  ldp x10,x11 ,[sp,#0x60]
+  |  ldp x8,x9 ,[sp,#0x50]
+  |  ldp x6,x7 ,[sp,#0x40]
+  |  ldp x4,x5 ,[sp,#0x30]
+  |  ldp x2,x3 ,[sp,#0x20]
+  |  ldp x0,x1 ,[sp,#0x10]
+  |  add sp, sp, #0x90
+  |.endmacro
   |.macro coroutine_resume_wrap, resume
   |.if resume
   |.ffunc_1 coroutine_resume
@@ -1242,11 +1266,26 @@ static void build_subroutines(BuildCtx *ctx)
   |   add RB, RB, #8
   |  bne <2
   |3:
+#ifdef LJ_HOOK_THREAD
+  |     save_all_caller_reg
+  |  mov CARG2,L
+  |  mov CARG3,#0
+  |  bl extern lj_thread_event
+  |     ret_all_caller_reg
+#endif
   |  mov CARG3, #0
   |   mov L:RA, L:CARG1
   |  mov CARG4, #0
   |  bl ->vm_resume			// (lua_State *L, TValue *base, 0, 0)
   |  // Returns thread status.
+#ifdef LJ_HOOK_THREAD
+  |     save_all_caller_reg
+  |  mov CARG1,L
+  |  mov CARG2,L:RA
+  |  mov CARG3,#1
+  |  bl extern lj_thread_event
+  |     ret_all_caller_reg
+#endif
   |4:
   |  ldp CARG3, CARG4, L:RA->base
   |   cmp CRET1, #LUA_YIELD
