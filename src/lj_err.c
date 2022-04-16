@@ -790,7 +790,7 @@ LJ_NOINLINE void lj_err_mem(lua_State *L)
 }
 
 /* Find error function for runtime errors. Requires an extra stack traversal. */
-static ptrdiff_t finderrfunc(lua_State *L)
+static ptrdiff_t finderrfunc(lua_State *L,int *is_protectcall)
 {
   cTValue *frame = L->base-1, *bot = tvref(L->stack)+LJ_FR2;
   void *cf = L->cframe;
@@ -829,6 +829,7 @@ static ptrdiff_t finderrfunc(lua_State *L)
       break;
     case FRAME_PCALL:
     case FRAME_PCALLH:
+      if(is_protectcall) *is_protectcall = 1;
       if (frame_func(frame_prevd(frame))->c.ffid == FF_xpcall)
 	return savestack(L, frame_prevd(frame)+1);  /* xpcall's errorfunc. */
       return 0;
@@ -843,9 +844,10 @@ static ptrdiff_t finderrfunc(lua_State *L)
 /* Runtime error. */
 LJ_NOINLINE void LJ_FASTCALL lj_err_run(lua_State *L)
 {
-  luai_errevent(L, LUA_ERRRUN);
-  ptrdiff_t ef = (LJ_HASJIT && tvref(G(L)->jit_base)) ? 0 : finderrfunc(L);
-  if (ef) {
+    int is_protectcall = 0;
+    ptrdiff_t ef = (LJ_HASJIT && tvref(G(L)->jit_base)) ? 0 : finderrfunc(L, &is_protectcall);
+    luai_errevent(L, LUA_ERRRUN | (is_protectcall ? 0 : LUA_ERREVENT_PANIC));
+    if (ef) {
     TValue *errfunc = restorestack(L, ef);
     TValue *top = L->top;
     lj_trace_abort(G(L));
