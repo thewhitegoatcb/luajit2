@@ -2614,6 +2614,8 @@ void lj_record_ins(jit_State *J)
       lj_ffrecord_func(J);
       break;
     }
+  case BC_INT:
+      break;
     /* fallthrough */
   case BC_UCLO:
   case BC_FNEW:

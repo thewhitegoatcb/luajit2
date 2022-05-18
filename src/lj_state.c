@@ -262,6 +262,7 @@ LUA_API lua_State *lua_newstate(lua_Alloc allocf, void *allocd)
   L->status = LUA_OK;
   L->exdata = NULL;
   L->exdata2 = NULL;
+  L->interrupt = NULL;
   return L;
 }
 
@@ -323,6 +324,7 @@ lua_State *lj_state_new(lua_State *L)
   lj_assertL(iswhite(obj2gco(L1)), "new thread object is not white");
   L1->exdata = L->exdata;
   L1->exdata2 = L->exdata2;
+  L1->interrupt = L->interrupt;
   return L1;
 }
 

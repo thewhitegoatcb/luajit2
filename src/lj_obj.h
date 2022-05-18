@@ -627,6 +627,8 @@ typedef struct StrInternState {
   LJ_ALIGN(8) uint64_t seed;	/* Random string seed. */
 } StrInternState;
 
+#define NUM_INTERRUPT 256
+
 /* Global state, shared by all threads of a Lua universe. */
 typedef struct global_State {
   lua_Alloc allocf;	/* Memory allocator. */
@@ -701,6 +703,7 @@ struct lua_State {
   MSize stacksize;	/* True stack size (incl. LJ_STACK_EXTRA). */
   void *exdata;	        /* user extra data pointer. added by OpenResty */
   void *exdata2;	/* the 2nd user extra data pointer. added by OpenResty */
+  BCIns* interrupt;
 #if LJ_TARGET_ARM
   uint32_t unused1;
   uint32_t unused2;
