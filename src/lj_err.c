@@ -741,7 +741,7 @@ static void err_raise_ext(global_State *g, int errcode)
 LJ_NOINLINE void LJ_FASTCALL lj_err_throw(lua_State *L, int errcode)
 {
   if (errcode != LUA_ERRRUN) {
-    luai_errevent(L, errcode);
+    luai_errevent(L, errcode, 0);
   }
   global_State *g = G(L);
   lj_trace_abort(g);
@@ -846,7 +846,7 @@ LJ_NOINLINE void LJ_FASTCALL lj_err_run(lua_State *L)
 {
     int is_protectcall = 0;
     ptrdiff_t ef = (LJ_HASJIT && tvref(G(L)->jit_base)) ? 0 : finderrfunc(L, &is_protectcall);
-    luai_errevent(L, LUA_ERRRUN | (is_protectcall ? 0 : LUA_ERREVENT_PANIC));
+    luai_errevent(L,LUA_ERRRUN,  (is_protectcall ? 0 : LUA_ERREVENT_PANIC));
     if (ef) {
     TValue *errfunc = restorestack(L, ef);
     TValue *top = L->top;

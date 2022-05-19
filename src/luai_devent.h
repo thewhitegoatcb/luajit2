@@ -11,14 +11,14 @@ void callhook(lua_State *L, int event, BCLine line);
 
 #define luai_errevent_(L, errcode) LUA_CALLHOOK(L, LUA_HOOKEXCEPTION, errcode)
 
-#define luai_errevent(L, errcode)           \
-    if (G(L)->hookmask2 & LUA_MASKEXCEPTION) {  \
+#define luai_errevent(L, errcode, ext_errcode)           \
+    if (L->hookmask2 & LUA_MASKEXCEPTION) {  \
         switch (errcode) {                  \
         case LUA_ERRRUN:                    \
         case LUA_ERRSYNTAX:                 \
         case LUA_ERRMEM:                    \
         case LUA_ERRERR: {                  \
-            luai_errevent_(L, errcode);        \
+            luai_errevent_(L, errcode | ext_errcode);        \
             break;                          \
         }}                                  \
     }

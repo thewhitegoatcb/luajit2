@@ -343,7 +343,7 @@ LUA_API int lua_sethook(lua_State *L, lua_Hook func, int mask, int count)
   g->hookf = func;
   g->hookcount = g->hookcstart = (int32_t)count;
   g->hookmask = (uint8_t)((g->hookmask & ~HOOK_EVENTMASK) | mask);
-  g->hookmask2 = mask2;
+  L->hookmask2 = mask2;
   lj_trace_abort(g);  /* Abort recording on any hook change. */
   lj_dispatch_update(g);
   return 1;
@@ -473,7 +473,7 @@ void LJ_FASTCALL lj_dispatch_ins(lua_State *L, const BCIns *pc)
 void LJ_FASTCALL lj_thread_event(lua_State *L, lua_State *from, int type)
 {
   ERRNO_SAVE
-    if (L && (G(L)->hookmask2 & LUA_MASKTHREAD)) {
+    if (L && (L->hookmask2 & LUA_MASKTHREAD)) {
         setrawlightudV(L->top, from);
         incr_top(L);
         callhook(L, LUA_HOOKTHREAD, type);
