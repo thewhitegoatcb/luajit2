@@ -452,20 +452,6 @@ void LJ_FASTCALL lj_dispatch_ins(lua_State *L, const BCIns *pc)
   }
   if ((g->hookmask & LUA_MASKRET) && bc_isret(bc_op(pc[-1])))
     callhook(L, LUA_HOOKRET, -1);
-  if (bc_op(pc[-1]) == BC_INT){
-      luai_apicheck(L, L->interrupt != NULL)
-      if (L->interrupt == NULL) {
-          exit(-1);
-      }
-      BCLine offset = bc_d(pc[-1]);
-      luai_apicheck(L, offset >= 0 && offset < NUM_INTERRUPT)
-      BCIns old = L->interrupt[offset];
-      L->interrupt[offset] = 0;
-      //还原指令
-      *((BCIns*)&pc[-1]) = old;
-      //处理中断
-      callhook(L, LUA_HOOKINTERRUPT, offset);
-  }
   ERRNO_RESTORE
 }
 

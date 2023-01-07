@@ -184,8 +184,7 @@
   _(ILOOP,	rbase,	___,	jump,	___) \
   _(JLOOP,	rbase,	___,	lit,	___) \
   \
-  _(JMP,	rbase,	___,	jump,	___)    \
-  _(INT,	rbase,	___,	num,	___)    \
+  _(JMP,	rbase,	___,	jump,	___) \
   \
   /* Function headers. I/J = interp/JIT, F/V/C = fixarg/vararg/C func. */ \
   _(FUNCF,	rbase,	___,	___,	___) \

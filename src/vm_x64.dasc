@@ -4576,10 +4576,7 @@ static void build_ins(BuildCtx *ctx, BCOp op, int defop)
     |  ins_next
     break;
 
-  case BC_INT:
-    break;
-
-    /* -- Function headers -------------------------------------------------- */
+  /* -- Function headers -------------------------------------------------- */
 
    /*
    ** Reminder: A function may be called with func/args above L->maxstack,

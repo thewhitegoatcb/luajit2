@@ -263,7 +263,6 @@ LUA_API lua_State *lua_newstate(lua_Alloc allocf, void *allocd)
   L->exdata = NULL;
   L->exdata2 = NULL;
   L->hookmask2 = 0;
-  L->interrupt = NULL;
   return L;
 }
 
@@ -326,7 +325,6 @@ lua_State *lj_state_new(lua_State *L)
   L1->exdata = L->exdata;
   L1->exdata2 = L->exdata2;
   L1->hookmask2 = L->hookmask2;
-  L1->interrupt = L->interrupt;
   return L1;
 }
 

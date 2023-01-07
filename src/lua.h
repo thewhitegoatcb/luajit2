@@ -325,7 +325,6 @@ LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 #define LUA_HOOKTAILRET 4
 #define LUA_HOOKEXCEPTION 5
 #define LUA_HOOKTHREAD 6
-#define LUA_HOOKINTERRUPT 7
 
 
 /*

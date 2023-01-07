@@ -3953,17 +3953,7 @@ static void build_ins(BuildCtx *ctx, BCOp op, int defop)
     |   sub RA, TMP1, RC		// RA = L->top - nresults*8
     |  b ->vm_returnc
     break;
-  case BC_INT:
-    |  // RA = uvnum, RC = num_const
-    |  ldr LFUNC:CARG2, [BASE, FRAME_FUNC]
-    |   add RA, RA, #offsetof(GCfuncL, uvptr)/8
-    |  and LFUNC:CARG2, CARG2, #LJ_GCVMASK
-    |  ldr UPVAL:CARG2, [LFUNC:CARG2, RA, lsl #3]
-    |   ldr TMP0, [KBASE, RC, lsl #3]
-    |  ldr CARG2, UPVAL:CARG2->v
-    |   str TMP0, [CARG2]
-    |  ins_next
-    break;
+
   /* ---------------------------------------------------------------------- */
 
   default:
