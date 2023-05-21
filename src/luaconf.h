@@ -12,6 +12,17 @@
 #include <limits.h>
 #include <stddef.h>
 
+////////////////////
+// TODO: move to makefile
+
+#define LUAJIT_DISABLE_GC64
+#define LUAJIT_TEST_FIXED_ORDER 1 
+#define LUAJIT_SECURITY_STRID 0 
+#define LUAJIT_SECURITY_STRHASH 0 
+#define LUAJIT_SECURITY_PRNG 0 
+#define LUAJIT_SECURITY_MCODE 0
+////////////////////
+
 /* Default path for loading Lua and C modules with require(). */
 #if defined(_WIN32)
 /*
