@@ -13,9 +13,6 @@
 #include <stddef.h>
 
 ////////////////////
-// TODO: move to makefile
-
-#define LUAJIT_DISABLE_GC64
 #define LUAJIT_TEST_FIXED_ORDER 1 
 #define LUAJIT_SECURITY_STRID 0 
 #define LUAJIT_SECURITY_STRHASH 0 
